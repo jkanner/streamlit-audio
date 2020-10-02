@@ -114,15 +114,13 @@ st.markdown("""
 In this demo, we will try to find a **secret sound** hidden in noisy
 data.  To do this, we will practice with a few signal processing concepts:
 
- * Plotting data in the time domain
- * Plotting data in the frequency domain
- * Band-pass filtering
+ * Plotting in the time domain and frequency domain
+ * Highpass and bandpass filtering
  * Whitening
 """)
 
+
 page = st.number_input('Section #', min_value=1, max_value=5, value=1, key='pagenumber')
-
-
 
 if page==1:
 
@@ -176,7 +174,12 @@ if page==1:
     
     st.audio(make_audio_file(noise), format='audio/wav')
 
-
+    st.markdown("")
+    st.markdown("""
+    When ready, go to the next section using the controls at the 
+    top.
+    """)
+    
 if page == 2:
 
     st.markdown("## 2: Red Noise")
@@ -326,7 +329,7 @@ if page == 5:
     gravitational-wave data from LIGO, around the binary black 
     hole signal GW150914.  We'll add one more element: 
     a **bandpass filter**.  A bandpass filter uses both a low frequency
-    cutoff and a high frequency cutoff, and only passes frequencies in the 
+    cutoff and a high frequency cutoff, and only passes signals in the 
     frequency band between these values. 
 
     Try using a whitening filter and a band-pass filter to reveal the
