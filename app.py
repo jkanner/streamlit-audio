@@ -185,10 +185,10 @@ if page == 2:
     Imagining random noise at different frequencies can be a hard thing
     to understand.  A silly way to picture this is as a sports stadium
     full of animals cheering. Some animals (like birds and kittens)
-    cheer with higher pitches, and other animals (like bull frogs and 
+    cheer with higher pitches, and other animals (like bullfrogs and 
     lions) will cheer with lower pitches.  If the stadium has animals of 
-    all kinds in equal numbers, you might get white noise cheering.  
-    If the stadium is full of low pitch creatures (say, full of bull frogs), 
+    all kinds in equal numbers, you might get white noise cheering.  If 
+    the stadium is full of low pitch creatures (say, lots of bullfrogs), 
     you might get red noise cheering.  Can you imagine the difference?
     
     A similar idea can be seen in noise in the LIGO and Virgo instruments.
@@ -203,15 +203,20 @@ if page == 2:
     # -- Show red noise with signal
     ###
 
-    st.markdown("### Time-domain (red noise)")
-    st.markdown("In the time-domain, you can see the signal look random")
+    st.markdown("In the time-domain, you can see the signal looks random")
     st.pyplot(maze.plot())
+
+    st.markdown("In the frequency-domain, the red noise has lots of power at low frequencies")
     figrn = maze.asd(fftlength=1).plot()
     plt.ylim(1e-11, 1e-4)
     plt.xlim(30, fs/2)
     st.pyplot(figrn)
     st.audio(make_audio_file(maze), format='audio/wav')
+    st.markdown("""
+    Can you hear the bullfrogs cheering?
 
+    How does this compare with the white noise sound?
+    """)
 
 if page == 3:
 
@@ -296,7 +301,21 @@ if page == 4:
 
 if page == 5:
 
-    st.markdown("## Gravitational Wave Data")
+    st.markdown("## 5: Gravitational Wave Data")
+
+    st.markdown("""
+    Finally, we'll try what we've learned on some real 
+    gravitational wave data from LIGO.  We'll add one more element: 
+    a **band-pass filter**.  A band-pass filter uses both a low frequency
+    cutoff and a high frequency cutoff, and only passes frequencies in the 
+    frequency band between these values. 
+
+    Try using a whitening filter and a band-pass filter to reveal the
+    gravitational wave signal in the data below.  For a hint of what 
+    to expect, look at Figure 1 in the 
+    , 
+    or check the hint box below.
+    """)
 
     detector = 'H1'
     t0 = 1126259462.4   #-- GW150914
@@ -336,9 +355,15 @@ if page == 5:
         white_data = strain
 
     bp_data = white_data.bandpass(lowfreqreal, highfreqreal)
+
+    st.markdown("""
+    With the right filtering, you might be able to see the signal in the time domain plot.
+    """)
+    
     fig3 = bp_data.plot()
     plt.xlim(t0-0.1, t0+0.1)
     st.pyplot(fig3)
+
 
 
     # -- PSD of whitened data
@@ -346,6 +371,9 @@ if page == 5:
     plt.figure()
     psdfig = bp_data.asd(fftlength=4).plot()
     plt.xlim(10, 1800)
+    ax = plt.gca()
+    ax.axvspan(1, lowfreqreal, color='red', alpha=0.3, label='Removed by filter')
+    ax.axvspan(highfreqreal, 1800, color='red', alpha=0.3, label='Removed by filter')   
     st.pyplot(psdfig)
 
     # -- Audio
@@ -356,9 +384,18 @@ if page == 5:
 
     st.markdown("""With the right filtering, you might be able to hear
     the black hole signal.  It doesn't sound like much - just a quick thump.  
+ """)
 
-*Hint: Using a band pass from 50 to 350 Hz, with whitening on, works 
-    pretty well*  """)
+    st.markdown("")
+    hint = st.checkbox('Show Hint')
 
+    if hint:
 
+        st.markdown("""
+        Hint: Try using a band pass from 30 to 400 Hz, with whitening on.
+        This is similar to what was used for Figure 1 of the 
+        [GW150914 discovery paper](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102), also shown below:
+        """)
+        
+        st.image('https://journals.aps.org/prl/article/10.1103/PhysRevLett.116.061102/figures/1/large')
 
