@@ -100,6 +100,9 @@ secret.t0 = 4
 #secret = secret/np.max(np.abs(secret)) * 1e-7
 maze = colorednoise.inject(secret)
 
+mazeloud = colorednoise.inject(10*secret)
+
+
 # -------
 # Begin Display Here
 # -------
@@ -138,14 +141,14 @@ if page==1:
     * An audio file
     """)
 
-    st.markdown("### Time-domain")
+    st.markdown("### Time domain")
 
     st.markdown("""
-    In the time-domain, we see the siganl as a function of time.  The 
+    In the time domain, we see a siganl as a function of time.  The 
     x-axis represents time, and the y-axis represents the **amplitude** of
     the signal.  For an audio signal, the amplitude corresponds to the 
-    amount of pressure felt on your ear-drum at any moment.  For a 
-    gravitatonal wave signal, the amplitude represents the strain - 
+    amount of pressure felt on your eardrum at any moment.  For a 
+    gravitatonal-wave signal, the amplitude represents the strain - 
     or fractional change in length - of the observatory's arms.
     """)
 
@@ -180,7 +183,7 @@ if page == 2:
     
     st.markdown("""
     Next, we'll look at some **red noise**.  Red noise 
-    has more power at low frequencies than high high frequencies.
+    has more power at low frequencies than high frequencies.
     
     Imagining random noise at different frequencies can be a hard thing
     to understand.  A silly way to picture this is as a sports stadium
@@ -203,10 +206,10 @@ if page == 2:
     # -- Show red noise with signal
     ###
 
-    st.markdown("In the time-domain, you can see the signal looks random")
+    st.markdown("In the time-domain, you can see the signal looks random.")
     st.pyplot(maze.plot())
 
-    st.markdown("In the frequency-domain, the red noise has lots of power at low frequencies")
+    st.markdown("In the frequency-domain, the red noise has lots of power at low frequencies.")
     figrn = maze.asd(fftlength=1).plot()
     plt.ylim(1e-11, 1e-4)
     plt.xlim(30, fs/2)
@@ -262,7 +265,18 @@ if page == 3:
     st.audio(make_audio_file(highpass), format='audio/wav')
 
     st.markdown("Can you hear the sound now?  What value of the cutoff frequency makes it easiest to hear?")
-    
+
+    st.markdown("")
+    needhint = st.checkbox("Need a hint?", value=False)
+
+    if needhint:
+
+        st.markdown("""Here is the secret sound.  Can you find it hidden in the
+        red noise above?
+        """)
+
+        st.audio(make_audio_file(secret), format='audio/wav')
+        
 if page == 4:
     st.markdown("## 4: Whitening")
 
@@ -281,7 +295,11 @@ if page == 4:
         whitemaze = maze.whiten()
     else:
         whitemaze = maze
-        
+
+    st.markdown("""
+    After whitening, you can see the secret sound in the time domain.
+    """)
+    
     st.pyplot(whitemaze.plot())
 
     figwh = whitemaze.asd(fftlength=1).plot()
@@ -305,16 +323,14 @@ if page == 5:
 
     st.markdown("""
     Finally, we'll try what we've learned on some real 
-    gravitational wave data from LIGO.  We'll add one more element: 
-    a **band-pass filter**.  A band-pass filter uses both a low frequency
+    gravitational-wave data from LIGO, around the binary black 
+    hole signal GW150914.  We'll add one more element: 
+    a **bandpass filter**.  A bandpass filter uses both a low frequency
     cutoff and a high frequency cutoff, and only passes frequencies in the 
     frequency band between these values. 
 
     Try using a whitening filter and a band-pass filter to reveal the
-    gravitational wave signal in the data below.  For a hint of what 
-    to expect, look at Figure 1 in the 
-    , 
-    or check the hint box below.
+    gravitational wave signal in the data below.  
     """)
 
     detector = 'H1'
@@ -325,20 +341,6 @@ if page == 5:
     strain = load_gw(t0, detector)
     center = int(t0)
     strain = strain.crop(center-14, center+14)
-
-    #-- Make a time series plot    
-
-    #st.subheader('Raw data')
-    #plt.figure()
-    #fig1 = strain.plot()
-    #plt.xlim(t0-0.2, t0+0.1)
-    #st.pyplot(fig1)
-
-    # -- Plot asd
-    #plt.figure()
-    #psdfig = strain.asd(fftlength=4).plot()
-    #plt.xlim(10, 1800)
-    #st.pyplot(psdfig)
 
     # -- Try whitened and band-passed plot
     # -- Whiten and bandpass data
@@ -387,7 +389,7 @@ if page == 5:
  """)
 
     st.markdown("")
-    hint = st.checkbox('Show Hint')
+    hint = st.checkbox('Need a hint?')
 
     if hint:
 
