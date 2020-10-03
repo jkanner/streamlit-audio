@@ -345,7 +345,7 @@ if page == 6:
     lowfreqreal, highfreqreal = st.slider("Band-pass filter",
                                           1, 2000, value=(1,2000) )
 
-    makewhite = st.checkbox("Apply whitening", value=True)
+    makewhite = st.checkbox("Apply whitening", value=False)
 
     if makewhite:
         white_data = strain.whiten()

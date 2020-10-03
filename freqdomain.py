@@ -129,6 +129,11 @@ Any periodic signal, $s_N(x)$, can be constructed by adding together sine waves 
 
     st.markdown("""
     How does the result of the Fourier Transform compare to the signal you generated?
+
+    One way to think about this is that each of the 3 sine waves is one 
+    note played by an instrument.  Our ears hear all 3 notes together.
+    Converting the signal to the frequency domain lets us see
+    which 3 notes were being played.
     """)
     
     # -- Close all open figures
