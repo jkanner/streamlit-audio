@@ -17,28 +17,11 @@ import io
 from scipy import signal
 from scipy.io import wavfile
 
+from freqdomain import showfreqdomain
+
+
 # Title the app
-st.title('Signal Processing Demo')
-
-st.markdown("""
- * Use the menu at left to select data and set plot parameters
- * Learn more at https://gw-openscience.org
-""")
-
-
-t0 = 0
-
-
-def make_audio(bp_data, t0):
-    # -- window data for gentle on/off
-    window = signal.windows.tukey(len(bp_data), alpha=1.0/10)
-    win_data = bp_data*window
-
-    # -- Normalize for 16 bit audio
-    win_data = np.int16(win_data/np.max(np.abs(win_data)) * 32767 * 0.9)
-
-    return win_data.value
-
+st.title('Signal Processing Tutorial')
 
 def make_audio_file(bp_data, t0=None):
     # -- window data for gentle on/off
@@ -48,9 +31,8 @@ def make_audio_file(bp_data, t0=None):
     # -- Normalize for 16 bit audio
     win_data = np.int16(win_data/np.max(np.abs(win_data)) * 32767 * 0.9)
 
-
     fs=1/win_data.dt.value
-    virtualfile = io.BytesIO()
+    virtualfile = io.BytesIO()    
     wavfile.write(virtualfile, int(fs), win_data)
     
     return virtualfile
@@ -72,14 +54,12 @@ noisedt = 8
 noise = deepcopy(makewhitenoise(fs, noisedt))
 
 #-- Try to color the noise
-
 noisefreq = noise.fft()
 color = 1.0 / (noisefreq.frequencies)**2
 indx = np.where(noisefreq.frequencies.value < 30)
-color[indx] = 0  #-- Avoid weirdness at frequency 0 and try low freq cut-off
+color[indx] = 0  #-- Apply low frequency cut-off at 30 Hz
 
-# -- Try making red noise
-
+#-- Red noise in frequency domain
 weightedfreq = noisefreq * color.value
 
 # -- Try returning to time domain
@@ -91,15 +71,13 @@ colorednoise = weightedfreq.ifft()
 secret = TimeSeries.read('LOZ_Secret.wav')
 
 # -- Normalize and convert to float
-#secret = np.int16(secret)
-secret -= secret.value[0]
-#secret = np.float(secret)
+secret -= secret.value[0]  #-- Remove constant offset
 secret = np.float64(secret)
-secret = secret/np.max(np.abs(secret)) * 1*1e-8
+secret = secret/np.max(np.abs(secret)) * 1*1e-8   #-- Set amplitude
 secret.t0 = 4
-#secret = secret/np.max(np.abs(secret)) * 1e-7
 maze = colorednoise.inject(secret)
 
+# -- Might be useful to make easier to hear option
 mazeloud = colorednoise.inject(10*secret)
 
 
@@ -117,15 +95,34 @@ data.  To do this, we will practice with a few signal processing concepts:
  * Plotting in the time domain and frequency domain
  * Highpass and bandpass filtering
  * Whitening
+
+*Note: This app works best in the **Chrome Browser** *
 """)
 
+sectionnames = [
+                'Introduction to the frequency domain',
+                'White Noise',
+                'Red Noise',
+                'Find the Secret Sound',
+                'Whitening',
+                'Gravitational Wave Data',
+]
 
-page = st.number_input('Section #', min_value=1, max_value=5, value=1, key='pagenumber')
+def headerlabel(number):
+    return "{0}: {1}".format(number, sectionnames[number-1])
+    
+page = st.radio('Select Section:', [1,2,3,4,5,6], format_func=headerlabel)
+
+st.markdown("## {}".format(headerlabel(page)))
 
 if page==1:
+    
+    showfreqdomain()
+    
+if page==2:
 
-    st.markdown("## 1: White noise")
-
+    # White Noise
+    
     st.markdown("""
     To get started, we'll take a look at some **white noise**.  Any 
     signal can be represented based on its frequency content.  When we 
@@ -180,9 +177,9 @@ if page==1:
     top.
     """)
     
-if page == 2:
+if page == 3:
 
-    st.markdown("## 2: Red Noise")
+    # st.markdown("## 3: Red Noise")
     
     st.markdown("""
     Next, we'll look at some **red noise**.  Red noise 
@@ -224,13 +221,12 @@ if page == 2:
     How does this compare with the white noise sound?
     """)
 
-if page == 3:
+if page == 4:
 
     # ----
     # Try to recover the signal
     # ----
-
-    st.markdown("## 3: Find the Secret Sound")
+    # st.markdown("## 4: Find the Secret Sound")
     
     st.markdown("""
     The red noise above isn't just noise - there's a secret sound 
@@ -280,8 +276,8 @@ if page == 3:
 
         st.audio(make_audio_file(secret), format='audio/wav')
         
-if page == 4:
-    st.markdown("## 4: Whitening")
+if page == 5:
+    # st.markdown("## 5: Whitening")
 
     st.markdown("""
     **Whitening** is a process that re-weights a signal, so that all
@@ -310,19 +306,16 @@ if page == 4:
     plt.xlim(30, fs/2)
     st.pyplot(figwh)
     
-    audio = make_audio(whitemaze, t0)
-    outfile = io.BytesIO()
-    wavfile.write(outfile, int(fs), audio)
-    st.audio(outfile, format='audio/wav')
+    st.audio(make_audio_file(whitemaze), format='audio/wav')
 
     st.markdown("""Try using the checkbox to whiten the data.  Is it 
     easier to hear the secret sound with or without whitening?
     """)
 
 
-if page == 5:
+if page == 6:
 
-    st.markdown("## 5: Gravitational Wave Data")
+    # st.markdown("## 6: Gravitational Wave Data")
 
     st.markdown("""
     Finally, we'll try what we've learned on some real 
