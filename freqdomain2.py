@@ -131,17 +131,17 @@ to generate the signal.
     """)
 
     st.markdown("#### Component 1")
-    freq1 = st.slider("Frequency (Hz)", 100, 400, 110)
+    freq1 = st.slider("Frequency (Hz)", 100, 400, 100, step=10)
     amp1 = st.number_input("Amplitude", 0, 5, 0, key='amp1slider')
     guess1 = makesine(freq1, amp1)
     
     st.markdown("#### Component 2")
-    freq2 = st.slider("Frequency (Hz)", 100, 400, 150)
+    freq2 = st.slider("Frequency (Hz)", 100, 400, 150, step=10)
     amp2 = st.number_input("Amplitude", 0, 5, 0, key='amp2slider')
     guess2 = makesine(freq2, amp2)
     
     st.markdown("#### Component 3")
-    freq3 = st.slider("Frequency (Hz)", 100, 400, 200)
+    freq3 = st.slider("Frequency (Hz)", 100, 400, 200, step=10)
     amp3 = st.number_input("Amplitude", 0, 5, 0, key='amp3slider')
     guess3 = makesine(freq3, amp3)
 
