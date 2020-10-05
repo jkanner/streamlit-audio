@@ -1,0 +1,184 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+import requests, os
+from gwpy.timeseries import TimeSeries
+from gwosc.locate import get_urls
+from gwosc import datasets
+from gwpy.plot import Plot
+
+import io
+from scipy import signal
+from scipy.io import wavfile
+
+cropstart = 1.0
+cropend   = 1.1
+
+def makesine(freq, amp, makeplot=True):
+    fs = 4096
+    time = np.arange(0,3, 1.0/fs)
+    y1 = amp*np.sin( 2*np.pi*freq*time )
+    if amp>0:
+        sig1 = TimeSeries(y1, dt=1.0/fs).taper() # ALS: Effect visible in plot: need to address or hide.
+    else:
+        sig1 = TimeSeries(y1, dt=1.0/fs)
+    if makeplot:
+        plt.figure()
+        fig_sig1 = sig1.crop(cropstart, cropend).plot()
+        plt.xlim(cropstart, cropend)
+        plt.ylim(-5,5)
+        plt.title('Frequency {0} Hz - Amplitude {1}'.format(freq,amp))
+        plt.ylabel('Pressure')
+        plt.xlabel('Time (Seconds)')
+        st.pyplot(fig_sig1, clear_figure=True)
+    return(sig1)
+
+
+def make_audio_file(bp_data, t0=None):
+    # -- window data for gentle on/off
+    window = signal.windows.tukey(len(bp_data), alpha=1.0/10)
+    win_data = bp_data*window
+
+    # -- Normalize for 16 bit audio
+    win_data = np.int16(win_data/np.max(np.abs(win_data)) * 32767 * 0.9)
+
+    fs=1/win_data.dt.value
+    virtualfile = io.BytesIO()    
+    wavfile.write(virtualfile, int(fs), win_data)
+    
+    return virtualfile
+
+
+def showfreqdomain():
+
+    st.markdown("""
+
+INTRODUCTION
+
+An important step in many signal processing algorithms is to transform time series data 
+(data points sequential in time) into a new representation in the frequency domain.  
+We will begin to explain what that means and why it is useful in this tutorial.  
+
+THREE NOTES
+
+The target signal below is composed of 3 different pitches, or **frequencies**.  Imagine we record this signal from our 
+favorite song, and we want to figure out the three frequencies used to make it.  How could we do this?  A similar 
+problem comes up in many experiments, when we record some data, and then wish to know what frequencies were used
+to generate the signal.
+
+""")
+
+    st.markdown("#### Target signal in time domain:")
+
+    sig1 = makesine(200, 4, False)
+    sig2 = makesine(250, 3, False)
+    sig3 = makesine(300, 2, False)
+    
+    totalsignal = sig1+sig2+sig3
+
+    fig_total = totalsignal.crop(cropstart, cropend).plot(color='orange')
+    plt.ylim(-10, 10)
+    plt.title('Taget Signal in Time Domain')
+    plt.ylabel('Pressure')
+    plt.xlabel('Time (seconds)')
+    st.pyplot(fig_total)
+
+    st.audio(make_audio_file(totalsignal), format='audio/wav')
+
+    st.markdown("""
+    The above plot shows the target signal in the **time domain**.  In a time-domain plot, the x-axis 
+    always represents time.  The y-axis represents the quantity measured at each time sample.  
+    For sound, this is the air pressure striking your each or microphone at any moment.
+
+    Can you tell which 3 **frequencies**, or pitches, were used to create this signal?  Probably not!
+    While the time domain is how we often record data, it is not a good way to see the componennt frequencies.
+    Instead, we can use a process known as a 
+    [Fourier Transform](https://www.youtube.com/watch?v=1JnayXHhjlg) to convert the signal to the 
+    **frequency domain**.  Click the check box below to try this:
+
+    """)
+
+    showfreq = st.checkbox('Convert target signal to the frequency domain', value=False)
+
+    if showfreq:
+
+        freqdomain = totalsignal.fft()
+        # sigfig = np.abs(freqdomain).plot()
+        freqplot = plt.figure()
+        plt.plot(freqdomain.frequencies, np.abs(freqdomain), color='orange', label='Target')
+        plt.title("Target signal in frequency domain")
+        plt.ylim(0,5)
+        plt.xlim(0,500)
+        plt.ylabel('Amplitude')
+        plt.xlabel('Frequency (Hz)')
+        st.pyplot(freqplot, clear_figure=True)
+    
+        st.markdown("""
+        Converting to the **frequency domain** shows us the individual components that contributed to the total.
+        In the **frequency domain**, the frequency (or pitch) of each component signal is shown on the x-axis.
+        The **amplitude** (or loudness) of each component signal is shown on the y-axis.
+
+        Using the frequency domain plot above:
+        * What are the 3 frequencies used to make the total signal?  
+        * What is the amplitude of each frequency?
+        """)
+
+
+    st.markdown("""
+    Try to recreate the above signal, using three components, or notes.  You can adjust the sliders to create each component.
+    """)
+
+    st.markdown("#### Component 1")
+    freq1 = st.slider("Frequency (Hz)", 100, 400, 110)
+    amp1 = st.number_input("Amplitude", 0, 5, 0, key='amp1slider')
+    guess1 = makesine(freq1, amp1)
+    
+    st.markdown("#### Component 2")
+    freq2 = st.slider("Frequency (Hz)", 100, 400, 150)
+    amp2 = st.number_input("Amplitude", 0, 5, 0, key='amp2slider')
+    guess2 = makesine(freq2, amp2)
+    
+    st.markdown("#### Component 3")
+    freq3 = st.slider("Frequency (Hz)", 100, 400, 200)
+    amp3 = st.number_input("Amplitude", 0, 5, 0, key='amp3slider')
+    guess3 = makesine(freq3, amp3)
+
+    st.markdown("### Adding the 3 components together:")
+    plt.figure()
+    guess  = guess1 + guess2 + guess3
+    
+    figsum = guess.crop(cropstart, cropend).plot(label='guess')
+    ax = figsum.gca()
+    ax.plot(totalsignal.crop(cropstart, cropend), color='orange', linestyle='--', label='target')
+    
+    plt.xlim(cropstart, cropend)
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Pressure')
+    plt.title("Total signal in time domain")
+    plt.legend()
+    st.pyplot(figsum, clear_figure=True)
+
+    mismatch = (totalsignal.crop(cropstart, cropend) - guess.crop(cropstart, cropend)).value.max()
+    # st.write(mismatch)
+
+    if mismatch < 0.1:
+        st.markdown("***A perfect match!  Great job!!***")
+    elif mismatch < 3:
+        st.markdown("***That's really close!***")    
+    
+    st.markdown("#### Audio for target signal")
+    st.audio(make_audio_file(totalsignal), format='audio/wav')
+
+    st.markdown("#### Audio for guess")
+    st.audio(make_audio_file(guess), format='audio/wav')
+    
+    st.markdown("""
+    See if you can recreate the target signal, by adjusting the 3 components.  
+
+    *Hint: Look for the component frequencies and amplitudes in the frequency-domain plot.*
+    """)
+
+    # -- Close all open figures
+    plt.close('all')

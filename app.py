@@ -17,7 +17,7 @@ import io
 from scipy import signal
 from scipy.io import wavfile
 
-from freqdomain import showfreqdomain
+from freqdomain2 import showfreqdomain
 
 
 # Title the app
