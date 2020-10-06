@@ -139,27 +139,34 @@ if page==2:
     st.markdown("### Time domain")
 
     st.markdown("""
-    In the time domain, we see a siganl as a function of time.  The 
-    x-axis represents time, and the y-axis represents the **amplitude** of
-    the signal.  For an audio signal, the amplitude corresponds to the 
-    amount of pressure felt on your eardrum at any moment.  For a 
+    In the **time domain**, we see a siganl as a function of time.  The 
+    x-axis represents time, and the y-axis represents the value of
+    the signal at each time.  For an audio signal, the signal value 
+    corresponds to the amount of pressure felt on your eardrum at any 
+    moment.  For a 
     gravitatonal-wave signal, the amplitude represents the strain - 
     or fractional change in length - of the observatory's arms.
     """)
-
-    st.pyplot(noise.plot())
-
+    
+    tplot = noise.plot()
+    plt.ylabel('Pressure')
+    st.pyplot(tplot)
+    
+    
     st.markdown("### Frequency domain")
 
     st.markdown("""
     In the **frequency domain**, the x-axis represents a frequency 
-    value, and the y-axis shows the amount of signal power at that
+    value, and the y-axis shows the **amplitude** 
+    (or [amplitude spectral density](https://en.wikipedia.org/wiki/Spectral_density))
+    of the signal at each
     frequency.  Since white noise has about the same power at each 
     frequency, this plot is mostly flat as you move from left to right.
     """)
     
     figwn = noise.asd(fftlength=1).plot()
     plt.ylim(1e-10, 1)
+    plt.ylabel('Amplitude Spectral Density')
     st.pyplot(figwn)
 
 
@@ -207,10 +214,14 @@ if page == 3:
     ###
 
     st.markdown("In the time-domain, you can see the signal looks random.")
-    st.pyplot(maze.plot())
+
+    figrnt = maze.plot()
+    plt.ylabel('Pressure')
+    st.pyplot(figrnt)
 
     st.markdown("In the frequency-domain, the red noise has lots of power at low frequencies.")
     figrn = maze.asd(fftlength=1).plot()
+    plt.ylabel('Amplitude Spectral Density')
     plt.ylim(1e-11, 1e-4)
     plt.xlim(30, fs/2)
     st.pyplot(figrn)
