@@ -8,47 +8,12 @@ from gwpy.timeseries import TimeSeries
 from gwosc.locate import get_urls
 from gwosc import datasets
 from gwpy.plot import Plot
-
-import io
 from scipy import signal
-from scipy.io import wavfile
+
+from helper import makesine, make_audio_file
 
 cropstart = 1.0
 cropend   = 1.1
-
-def makesine(freq, amp, makeplot=True):
-    fs = 4096
-    time = np.arange(0,3, 1.0/fs)
-    y1 = amp*np.sin( 2*np.pi*freq*time )
-    if amp>0:
-        sig1 = TimeSeries(y1, dt=1.0/fs).taper() # ALS: Effect visible in plot: need to address or hide.
-    else:
-        sig1 = TimeSeries(y1, dt=1.0/fs)
-    if makeplot:
-        plt.figure()
-        fig_sig1 = sig1.crop(cropstart, cropend).plot()
-        plt.xlim(cropstart, cropend)
-        plt.ylim(-5,5)
-        plt.title('Frequency {0} Hz - Amplitude {1}'.format(freq,amp))
-        plt.ylabel('Pressure')
-        plt.xlabel('Time (Seconds)')
-        st.pyplot(fig_sig1, clear_figure=True)
-    return(sig1)
-
-
-def make_audio_file(bp_data, t0=None):
-    # -- window data for gentle on/off
-    window = signal.windows.tukey(len(bp_data), alpha=1.0/10)
-    win_data = bp_data*window
-
-    # -- Normalize for 16 bit audio
-    win_data = np.int16(win_data/np.max(np.abs(win_data)) * 32767 * 0.9)
-
-    fs=1/win_data.dt.value
-    virtualfile = io.BytesIO()    
-    wavfile.write(virtualfile, int(fs), win_data)
-    
-    return virtualfile
 
 
 def showfreqdomain():
@@ -180,5 +145,11 @@ to generate the signal.
     *Hint: Look for the component frequencies and amplitudes in the frequency-domain plot.*
     """)
 
+    st.markdown("""
+    When ready, go to the next section using the controls at the 
+    top.
+    """)
+    
+    
     # -- Close all open figures
     plt.close('all')

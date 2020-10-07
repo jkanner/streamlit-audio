@@ -1,53 +1,22 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
-from numpy import random
-
 import matplotlib.pyplot as plt
-
 import requests, os
 from gwpy.timeseries import TimeSeries
 from gwosc.locate import get_urls
 from gwosc import datasets
 from gwosc.api import fetch_event_json
-
 from copy import deepcopy
-
 import io
 from scipy import signal
 from scipy.io import wavfile
-
 from freqdomain2 import showfreqdomain
 
+# -- Helper functions in this git repo
+from helper import *
 
 # Title the app
 st.title('Signal Processing Tutorial')
-
-def make_audio_file(bp_data, t0=None):
-    # -- window data for gentle on/off
-    window = signal.windows.tukey(len(bp_data), alpha=1.0/10)
-    win_data = bp_data*window
-
-    # -- Normalize for 16 bit audio
-    win_data = np.int16(win_data/np.max(np.abs(win_data)) * 32767 * 0.9)
-
-    fs=1/win_data.dt.value
-    virtualfile = io.BytesIO()    
-    wavfile.write(virtualfile, int(fs), win_data)
-    
-    return virtualfile
-
-@st.cache   #-- Magic command to cache data
-def load_gw(t0, detector):
-    strain = TimeSeries.fetch_open_data(detector, t0-14, t0+14, cache=False)
-    return strain
-
-
-# -- Method to make and cache random noise
-@st.cache
-def makewhitenoise(fs, dt):
-    noise = TimeSeries(random.normal(scale=.1, size=fs*noisedt), sample_rate=fs)
-    return noise
 
 fs = 32000
 noisedt = 8
@@ -128,27 +97,27 @@ if page==2:
     # White Noise
     
     st.markdown("""
-    To get started, we'll take a look at some **white noise**.  Any 
+    Next, let's take a look at some **white noise**.  Any 
     signal can be represented based on its frequency content.  When we 
-    say that noise is *white*, we mean that signal has about the same 
-    signal power at all frequencies.  
+    say that noise is *white*, we mean the signal has about the same 
+    amplitude at all frequencies.  
     
     Below, we'll represent the **same signal three different ways**:
     
     * A time-domain signal
-    * A frequency domain signal
+    * A frequency-domain signal
     * An audio file
     """)
 
     st.markdown("### Time domain")
 
     st.markdown("""
-    In the **time domain**, we see a siganl as a function of time.  The 
+    In the **time domain**, we see a signal as a function of time.  The 
     x-axis represents time, and the y-axis represents the value of
     the signal at each time.  For an audio signal, the signal value 
     corresponds to the amount of pressure felt on your eardrum at any 
     moment.  For a 
-    gravitatonal-wave signal, the amplitude represents the strain - 
+    gravitatonal-wave signal, the signal value represents the strain - 
     or fractional change in length - of the observatory's arms.
     """)
     
@@ -164,7 +133,7 @@ if page==2:
     value, and the y-axis shows the **amplitude** 
     (or [amplitude spectral density](https://en.wikipedia.org/wiki/Spectral_density))
     of the signal at each
-    frequency.  Since white noise has about the same power at each 
+    frequency.  Since white noise has about the same amplitude at each 
     frequency, this plot is mostly flat as you move from left to right.
     """)
     
@@ -218,7 +187,7 @@ if page == 3:
     # -- Show red noise with signal
     ###
 
-    st.markdown("In the time-domain, you can see the signal looks random.")
+    st.markdown("In the time-domain, you can see the red noise looks random.")
 
     figrnt = maze.plot()
     plt.ylabel('Pressure')
@@ -248,14 +217,15 @@ if page == 4:
     The red noise above isn't just noise - there's a secret sound 
     inside.  Did you hear it?  Probably not!  All of that low-frequency
     noise is making the secret sound very hard to hear.  But ... if the
-    secret sound is not at low frequencies, maybe we could still hear it.
+    secret sound is at higher frequencies, maybe we could still hear it.
     
     What we need is a way to get rid of some of the low frequency noise, 
     while keeping the high frequency part of the signal.  In signal processing,
-    this is known as a **high pass filter** - a filter that all removes
-    low frequency sounds, and keeps (or allows to pass) the high frequency 
-    sounds.  The frequency above which signals are passed is called the 
-    **cutoff frequency**.
+    this is known as a **high pass filter** - a filter that removes
+    low frequency sounds, and keeps (or allows to *pass*) the high frequency 
+    sounds.  The term **cutoff frequency** marks the boundary: frequencies
+    below the cuttoff frequency are removed, and frequencies above the 
+    cutoff frequency are passed.
 
     See if you can use a high pass filter to find the secret sound.  Adjust the 
     cutoff frequency using the slider below, and see if you can remove 
@@ -417,4 +387,3 @@ if page == 6:
         """)
         
         st.image('https://journals.aps.org/prl/article/10.1103/PhysRevLett.116.061102/figures/1/large')
-
