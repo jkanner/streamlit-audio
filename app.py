@@ -75,10 +75,14 @@ secret -= secret.value[0]  #-- Remove constant offset
 secret = np.float64(secret)
 secret = secret/np.max(np.abs(secret)) * 1*1e-8   #-- Set amplitude
 secret.t0 = 4
-maze = colorednoise.inject(secret)
 
+volume = st.sidebar.radio("Secret sound volume", ["Default", "Louder"])
+
+if volume == 'Louder':
+    maze = colorednoise.inject(10*secret)
+else:
 # -- Might be useful to make easier to hear option
-mazeloud = colorednoise.inject(10*secret)
+    maze = colorednoise.inject(secret)
 
 
 # -------
@@ -165,6 +169,7 @@ if page==2:
     """)
     
     figwn = noise.asd(fftlength=1).plot()
+    #figwn = np.abs(noise.fft()).plot(yscale='log')
     plt.ylim(1e-10, 1)
     plt.ylabel('Amplitude Spectral Density')
     st.pyplot(figwn)
@@ -260,7 +265,7 @@ if page == 4:
 
     lowfreq = st.slider("High pass filter cutoff frequency", 0, 3000, 0, step=100)
     if lowfreq == 0: lowfreq=1
-  
+
     highpass = maze.highpass(lowfreq)
     #st.pyplot(highpass.plot())
 
@@ -271,6 +276,7 @@ if page == 4:
     ax = plt.gca()
     ax.axvspan(1, lowfreq, color='red', alpha=0.3, label='Removed by filter')
     plt.legend()
+    plt.ylabel('Amplitude Spectral Density')
     st.pyplot(fighp)
     st.audio(make_audio_file(highpass), format='audio/wav')
 
@@ -286,6 +292,10 @@ if page == 4:
         """)
 
         st.audio(make_audio_file(secret), format='audio/wav')
+
+        st.markdown("""You can also make the sound easier to hear by 
+        clicking the 'Louder' option in the menu at left
+        """)
         
 if page == 5:
     # st.markdown("## 5: Whitening")
@@ -315,6 +325,7 @@ if page == 5:
     figwh = whitemaze.asd(fftlength=1).plot()
     plt.ylim(1e-12, 1)
     plt.xlim(30, fs/2)
+    plt.ylabel('Amplitude Spectral Density')
     st.pyplot(figwh)
     
     st.audio(make_audio_file(whitemaze), format='audio/wav')
@@ -373,8 +384,6 @@ if page == 6:
     plt.xlim(t0-0.1, t0+0.1)
     st.pyplot(fig3)
 
-
-
     # -- PSD of whitened data
     # -- Plot psd
     plt.figure()
@@ -382,7 +391,8 @@ if page == 6:
     plt.xlim(10, 1800)
     ax = plt.gca()
     ax.axvspan(1, lowfreqreal, color='red', alpha=0.3, label='Removed by filter')
-    ax.axvspan(highfreqreal, 1800, color='red', alpha=0.3, label='Removed by filter')   
+    ax.axvspan(highfreqreal, 1800, color='red', alpha=0.3, label='Removed by filter')
+    plt.ylabel('Amplitude Spectral Density')
     st.pyplot(psdfig)
 
     # -- Audio
