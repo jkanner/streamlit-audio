@@ -12,6 +12,10 @@ from scipy import signal
 
 from helper import makesine, make_audio_file
 
+# -- Need to lock plots to be more thread-safe
+from matplotlib.backends.backend_agg import RendererAgg
+lock = RendererAgg.lock
+
 cropstart = 1.0
 cropend   = 1.1
 
@@ -43,12 +47,15 @@ to generate the signal.
     
     totalsignal = sig1+sig2+sig3
 
-    fig_total = totalsignal.crop(cropstart, cropend).plot(color='orange')
-    plt.ylim(-10, 10)
-    plt.title('Taget Signal in Time Domain')
-    plt.ylabel('Pressure')
-    plt.xlabel('Time (seconds)')
-    st.pyplot(fig_total)
+    with lock:
+        fig_total = totalsignal.crop(cropstart, cropend).plot(
+            color='orange',
+            ylim=(-10, 10),
+            title='Taget Signal in Time Domain',
+            ylabel='Pressure',
+            xlabel='Time (seconds)',
+        )
+        st.pyplot(fig_total)
 
     st.audio(make_audio_file(totalsignal), format='audio/wav')
 
@@ -68,17 +75,19 @@ to generate the signal.
     showfreq = st.checkbox('Convert target signal to the frequency domain', value=False)
 
     if showfreq:
-
         freqdomain = totalsignal.fft()
-        # sigfig = np.abs(freqdomain).plot()
-        freqplot = plt.figure()
-        plt.plot(freqdomain.frequencies, np.abs(freqdomain), color='orange', label='Target')
-        plt.title("Target signal in frequency domain")
-        plt.ylim(0,5)
-        plt.xlim(0,500)
-        plt.ylabel('Amplitude')
-        plt.xlabel('Frequency (Hz)')
-        st.pyplot(freqplot, clear_figure=True)
+        
+        with lock:
+            freqplot = np.abs(freqdomain).plot(yscale='linear',
+                                           xscale='linear',
+                                           color='orange',
+                                           ylim=(0,5),
+                                           xlim=(0,500),
+                                           ylabel='Amplitude',
+                                           xlabel='Frequency (Hz)',
+                                           title="Target signal in frequency domain",
+            )
+            st.pyplot(freqplot, clear_figure=True)
     
         st.markdown("""
         Converting to the **frequency domain** shows us the individual components that contributed to the total.

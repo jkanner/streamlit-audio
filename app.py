@@ -1,3 +1,7 @@
+# -- Use Agg backend to be thread safe
+import matplotlib as mpl
+mpl.use("agg")
+
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,10 +15,6 @@ import io
 from scipy import signal
 from scipy.io import wavfile
 from freqdomain2 import showfreqdomain
-
-# -- Use Agg backend to be thread safe
-import matplotlib as mpl
-mpl.use("agg")
 
 # -- Need to lock plots to be more thread-safe
 from matplotlib.backends.backend_agg import RendererAgg
