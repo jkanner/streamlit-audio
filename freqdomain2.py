@@ -107,32 +107,39 @@ to generate the signal.
     st.markdown("#### Component 1")
     freq1 = st.slider("Frequency (Hz)", 100, 400, 100, step=10)
     amp1 = st.number_input("Amplitude", 0, 5, 0, key='amp1slider')
-    guess1 = makesine(freq1, amp1)
+
+    with lock:
+        guess1 = makesine(freq1, amp1)
     
     st.markdown("#### Component 2")
     freq2 = st.slider("Frequency (Hz)", 100, 400, 150, step=10)
     amp2 = st.number_input("Amplitude", 0, 5, 0, key='amp2slider')
-    guess2 = makesine(freq2, amp2)
+
+    with lock:
+        guess2 = makesine(freq2, amp2)
     
     st.markdown("#### Component 3")
     freq3 = st.slider("Frequency (Hz)", 100, 400, 200, step=10)
     amp3 = st.number_input("Amplitude", 0, 5, 0, key='amp3slider')
-    guess3 = makesine(freq3, amp3)
+
+    with lock:
+        guess3 = makesine(freq3, amp3)
 
     st.markdown("### Adding the 3 components together:")
-    plt.figure()
+    
     guess  = guess1 + guess2 + guess3
-    
-    figsum = guess.crop(cropstart, cropend).plot(label='guess')
-    ax = figsum.gca()
-    ax.plot(totalsignal.crop(cropstart, cropend), color='orange', linestyle='--', label='target')
-    
-    plt.xlim(cropstart, cropend)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Pressure')
-    plt.title("Total signal in time domain")
-    plt.legend()
-    st.pyplot(figsum, clear_figure=True)
+
+    with lock:
+        figsum = guess.crop(cropstart, cropend).plot(label='guess',
+                                                     xlim=(cropstart,cropend),
+                                                     ylabel='Pressure',
+                                                     xlabel='Time (seconds)',
+                                                     title = 'Total signal in time domain',
+                                                     )        
+        ax = figsum.gca()
+        ax.plot(totalsignal.crop(cropstart, cropend), color='orange', linestyle='--', label='target')
+        ax.legend()
+        st.pyplot(figsum, clear_figure=True)
 
     mismatch = (totalsignal.crop(cropstart, cropend) - guess.crop(cropstart, cropend)).value.max()
     # st.write(mismatch)

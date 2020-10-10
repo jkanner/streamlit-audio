@@ -44,13 +44,13 @@ def makesine(freq, amp, makeplot=True, cropstart=1.0, cropend=1.1):
     else:
         sig1 = TimeSeries(y1, dt=1.0/fs)
     if makeplot:
-        plt.figure()
-        fig_sig1 = sig1.crop(cropstart, cropend).plot()
-        plt.xlim(cropstart, cropend)
-        plt.ylim(-5,5)
-        plt.title('Frequency {0} Hz - Amplitude {1}'.format(freq,amp))
-        plt.ylabel('Pressure')
-        plt.xlabel('Time (Seconds)')
+        fig_sig1 = sig1.crop(cropstart, cropend).plot(
+            xlim=(cropstart, cropend),
+            ylim=(-5,5),
+            title='Frequency {0} Hz - Amplitude {1}'.format(freq,amp),
+            ylabel='Pressure',
+            xlabel='Time (Seconds)',
+        )
         st.pyplot(fig_sig1, clear_figure=True)
     return(sig1)
 
