@@ -35,8 +35,9 @@ def makewhitenoise(fs, dt):
     return noise
 
 
-def makesine(freq, amp, makeplot=True, cropstart=1.0, cropend=1.1):
+def makesine(freq, amp, makeplot=True, cropstart=1.0, cropend=1.05):
     fs = 4096
+    
     time = np.arange(0,3, 1.0/fs)
     y1 = amp*np.sin( 2*np.pi*freq*time )
     if amp>0:

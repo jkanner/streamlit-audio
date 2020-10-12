@@ -17,7 +17,7 @@ from matplotlib.backends.backend_agg import RendererAgg
 lock = RendererAgg.lock
 
 cropstart = 1.0
-cropend   = 1.1
+cropend   = 1.05
 
 
 def showfreqdomain():
@@ -146,6 +146,7 @@ to generate the signal.
 
     if mismatch < 0.1:
         st.markdown("***A perfect match!  Great job!!***")
+        st.balloons()
     elif mismatch < 3:
         st.markdown("***That's really close!***")    
     
