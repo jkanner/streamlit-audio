@@ -54,6 +54,7 @@ to generate the signal.
             title='Taget Signal in Time Domain',
             ylabel='Pressure',
             xlabel='Time (seconds)',
+            xlim=(cropstart, cropend)
         )
         st.pyplot(fig_total)
 
