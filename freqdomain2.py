@@ -32,7 +32,8 @@ We will begin to explain what that means and why it is useful in this tutorial.
 
 THREE NOTES
 
-The target signal below is composed of 3 different pitches, or **frequencies**.  Imagine we record this signal from our 
+The target signal below is composed of 3 different pitches, or 
+**[frequencies](https://youtu.be/Axx8WfxQDkk)**.  Imagine we record this signal from our 
 favorite song, and we want to figure out the three frequencies used to make it.  How could we do this?  A similar 
 problem comes up in many experiments, when we record some data, and then wish to know what frequencies were used
 to generate the signal.
@@ -63,7 +64,7 @@ to generate the signal.
     st.markdown("""
     The above plot shows the target signal in the **time domain**.  In a time-domain plot, the x-axis 
     always represents time.  The y-axis represents the quantity measured at each time sample.  
-    For sound, this is the air pressure striking your each or microphone at any moment.
+    For sound, this is the air pressure striking your ear or microphone at any moment.
 
     Can you tell which 3 **frequencies**, or pitches, were used to create this signal?  Probably not!
     While the time domain is how we often record data, it is not a good way to see the componennt frequencies.
@@ -93,7 +94,8 @@ to generate the signal.
         st.markdown("""
         Converting to the **frequency domain** shows us the individual components that contributed to the total.
         In the **frequency domain**, the frequency (or pitch) of each component signal is shown on the x-axis.
-        The **amplitude** (or loudness) of each component signal is shown on the y-axis.
+        The **[amplitude](https://www.youtube.com/watch?v=TsQL-sXZOLc)** 
+        (or loudness) of each component signal is shown on the y-axis.
 
         Using the frequency domain plot above:
         * What are the 3 frequencies used to make the total signal?  
@@ -146,10 +148,10 @@ to generate the signal.
     # st.write(mismatch)
 
     if mismatch < 0.1:
-        st.markdown("***A perfect match!  Great job!!***")
+        st.markdown("### A perfect match!  Great job!!")
         st.balloons()
     elif mismatch < 3:
-        st.markdown("***That's really close!***")    
+        st.markdown("### That's really close!")    
     
     st.markdown("#### Audio for target signal")
     st.audio(make_audio_file(totalsignal), format='audio/wav')

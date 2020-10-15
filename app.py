@@ -137,8 +137,9 @@ if page==2:
 
     st.markdown("""
     In the **frequency domain**, the x-axis represents a frequency 
-    value, and the y-axis shows the **amplitude** 
-    (or [amplitude spectral density](https://en.wikipedia.org/wiki/Spectral_density))
+    value, and the y-axis shows the 
+    **amplitude**,
+    or the closely related amplitude spectral density,
     of the signal at each
     frequency.  Since white noise has about the same amplitude at each 
     frequency, this plot is mostly flat as you move from left to right.
