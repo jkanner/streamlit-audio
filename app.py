@@ -238,7 +238,7 @@ if page == 4:
 
     """)
 
-    lowfreq = st.slider("High pass filter cutoff frequency", 0, 3000, 0, step=100)
+    lowfreq = st.slider("High pass filter cutoff frequency (Hz)", 0, 3000, 0, step=100)
     if lowfreq == 0: lowfreq=1
 
     highpass = maze.highpass(lowfreq)
@@ -292,7 +292,12 @@ if page == 5:
         whitemaze = maze
 
     st.markdown("""
-    After whitening, you can see the secret sound in the time domain.
+    After whitening, you can see the secret sound in the time domain.  You 
+    may also notice that the whitened signal gently fades in at the beginning,
+    and 
+    out at the end - this gentle turn on / turn off is due to 
+    **windowning**, and is important to apply in many signal processing
+    applications.
     """)
     
     st.pyplot(whitemaze.plot())
@@ -337,7 +342,7 @@ if page == 6:
     # -- Whiten and bandpass data
     st.subheader('Whitened and Bandbassed Data')
 
-    lowfreqreal, highfreqreal = st.slider("Band-pass filter",
+    lowfreqreal, highfreqreal = st.slider("Band-pass filter cutoff (Hz)",
                                           1, 2000, value=(1,2000) )
 
     makewhite = st.checkbox("Apply whitening", value=False)
