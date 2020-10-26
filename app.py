@@ -23,11 +23,13 @@ lock = RendererAgg.lock
 # -- Helper functions in this git repo
 from helper import *
 
-st.beta_set_page_config(page_title='Audio Tutorial',
+apptitle = 'Signal Processing Tutorial'
+
+st.beta_set_page_config(page_title=apptitle, page_icon=":headphones:",
                                initial_sidebar_state='collapsed')
 
 # Title the app
-st.title('Signal Processing Tutorial')
+st.title(apptitle)
 
 fs = 32000
 noisedt = 8
