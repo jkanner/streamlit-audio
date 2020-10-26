@@ -393,3 +393,11 @@ if page == 6:
         """)
         
         st.image('https://journals.aps.org/prl/article/10.1103/PhysRevLett.116.061102/figures/1/large')
+
+
+
+st.markdown("""## About this app
+
+This app displays data from LIGO, Virgo, and GEO downloaded from the Gravitational Wave Open Science Center at 
+[https://gw-openscience.org](https://gw-osc.org).
+""")
