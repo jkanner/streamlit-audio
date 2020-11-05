@@ -25,7 +25,7 @@ from helper import *
 
 apptitle = 'Signal Processing Tutorial'
 
-st.beta_set_page_config(page_title=apptitle, page_icon=":headphones:",
+st.set_page_config(page_title=apptitle, page_icon=":headphones:",
                                initial_sidebar_state='collapsed')
 
 # Title the app
