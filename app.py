@@ -156,8 +156,8 @@ if page==2:
 
     st.markdown("### Audio player")
     st.markdown("""
-    You can use the audio player to listen the signal.  You should hear
-    a hiss of white noise (works best in Chrome browser).
+    :point_right: **Use the audio player to listen the signal.  You should hear
+    a hiss of white noise**.
     """)
     
     st.audio(make_audio_file(noise), format='audio/wav')
@@ -213,7 +213,7 @@ if page == 3:
     st.markdown("""
     Can you hear the bullfrogs cheering?
 
-    How does this compare with the white noise sound?
+    :point_right: **How does this compare with the white noise sound?**
     """)
 
 if page == 4:
@@ -237,9 +237,11 @@ if page == 4:
     below the cuttoff frequency are removed, and frequencies above the 
     cutoff frequency are passed.
 
-    See if you can use a high pass filter to find the secret sound.  Adjust the 
+    See if you can use a high pass filter to find the secret sound.  
+
+    :point_right: **Adjust the 
     cutoff frequency using the slider below, and see if you can remove 
-    some noise to find the secret sound.
+    some noise to find the secret sound.**
 
     """)
 
@@ -287,7 +289,9 @@ if page == 5:
     noise covers it up.  By whitening the data,
     we can prevent the low-frequency noise from dominating what we hear. 
     
+    :point_right: **Use the checkbox to whiten the data**
     """)
+
     
     whiten = st.checkbox("Whiten the data?", value=False)
 
@@ -330,8 +334,8 @@ if page == 6:
     cutoff and a high frequency cutoff, and only passes signals in the 
     frequency band between these values. 
 
-    Try using a whitening filter and a band-pass filter to reveal the
-    gravitational wave signal in the data below.  
+    :point_right: **Try using a whitening filter and a band-pass filter to reveal the
+    gravitational wave signal in the data below.**  
     """)
 
     detector = 'H1'

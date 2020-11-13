@@ -28,7 +28,8 @@ INTRODUCTION
 
 An important step in many signal processing algorithms is to transform time series data 
 (data points sequential in time) into a new representation in the frequency domain.  
-We will begin to explain what that means and why it is useful in this tutorial.  
+We will begin to explain what that means and why it is useful in this tutorial, by 
+recreating a target signal from components.
 
 THREE NOTES
 
@@ -70,7 +71,9 @@ to generate the signal.
     While the time domain is how we often record data, it is not a good way to see the componennt frequencies.
     Instead, we can use a process known as a 
     [Fourier Transform](https://www.youtube.com/watch?v=1JnayXHhjlg) to convert the signal to the 
-    **frequency domain**.  Click the check box below to try this:
+    **frequency domain**.  
+
+    :point_right: **Click the check box below to convert the target signal to the frequency domain**.
 
     """)
 
@@ -104,7 +107,7 @@ to generate the signal.
 
 
     st.markdown("""
-    Try to recreate the above signal, using three components, or notes.  You can adjust the sliders to create each component.
+    :point_right: **Try to recreate the above signal, using three components, or notes.  You can adjust the sliders to create each component**.
     """)
 
     st.markdown("#### Component 1")
@@ -148,7 +151,7 @@ to generate the signal.
     # st.write(mismatch)
 
     if mismatch < 0.1:
-        st.markdown("### A perfect match!  Great job!!")
+        st.markdown("### A perfect match!  Great job!!  :trophy:")
         st.balloons()
     elif mismatch < 3:
         st.markdown("### That's really close!")    
