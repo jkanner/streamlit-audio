@@ -52,9 +52,7 @@ def makesine(freq, amp, makeplot=True, cropstart=1.0, cropend=1.05):
         plot_signal(sig1)
     return(sig1)
 
-
 def plot_signal(signal, cropstart=1.0, cropend=1.05, color_num=0, display=True):
-
     crop_signal = signal.crop(cropstart, cropend)
     source = pd.DataFrame({
         'Time (s)': crop_signal.times,
@@ -73,5 +71,3 @@ def plot_signal(signal, cropstart=1.0, cropend=1.05, color_num=0, display=True):
         st.altair_chart(chart, use_container_width=True)
 
     return(chart)
-
-
