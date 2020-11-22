@@ -70,8 +70,6 @@ else:
 # -------
 # Begin Display Here
 # -------
-
-
 st.markdown("## Introduction")
 
 st.markdown("""
@@ -81,8 +79,6 @@ data.  To do this, we will practice with a few signal processing concepts:
  * Plotting in the time domain and frequency domain
  * Highpass and bandpass filtering
  * Whitening
-
-*Note: This app works best in the **Chrome Browser** *
 """)
 
 sectionnames = [
