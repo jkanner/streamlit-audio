@@ -7,6 +7,10 @@ import numpy as np
 import io
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
+import altair as alt
+import pandas as pd
+
+
 
 def make_audio_file(bp_data, t0=None):
     # -- window data for gentle on/off
@@ -53,6 +57,21 @@ def makesine(freq, amp, makeplot=True, cropstart=1.0, cropend=1.05):
             xlabel='Time (Seconds)',
         )
         st.pyplot(fig_sig1, clear_figure=True)
+        
     return(sig1)
 
 
+def plot_signal(signal, cropstart=1.0, cropend=1.05):
+
+    crop_signal = signal.crop(cropstart, cropend)
+    source = pd.DataFrame({
+        'Time (s)': crop_signal.times,
+        'Amplitude': crop_signal.value
+    })
+
+    chart = alt.Chart(source).mark_line().encode(
+        x='Time (s)',
+        y='Amplitude'
+    )
+
+    st.altair_chart(chart, use_container_width=True)
