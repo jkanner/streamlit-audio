@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import altair as alt
 
 import requests, os
 from gwpy.timeseries import TimeSeries
@@ -10,7 +11,7 @@ from gwosc import datasets
 from gwpy.plot import Plot
 from scipy import signal
 
-from helper import makesine, make_audio_file
+from helper import makesine, make_audio_file, plot_signal
 
 # -- Need to lock plots to be more thread-safe
 from matplotlib.backends.backend_agg import RendererAgg
@@ -48,17 +49,7 @@ to generate the signal.
     sig3 = makesine(300, 2, False)
     
     totalsignal = sig1+sig2+sig3
-
-    with lock:
-        fig_total = totalsignal.crop(cropstart, cropend).plot(
-            color='orange',
-            ylim=(-10, 10),
-            title='Taget Signal in Time Domain',
-            ylabel='Pressure',
-            xlabel='Time (seconds)',
-            xlim=(cropstart, cropend)
-        )
-        st.pyplot(fig_total)
+    plot_signal(totalsignal, color_num=1)
 
     st.audio(make_audio_file(totalsignal), format='audio/wav')
 
@@ -81,19 +72,27 @@ to generate the signal.
 
     if showfreq:
         freqdomain = totalsignal.fft()
-        
-        with lock:
-            freqplot = np.abs(freqdomain).plot(yscale='linear',
-                                           xscale='linear',
-                                           color='orange',
-                                           ylim=(0,5),
-                                           xlim=(0,500),
-                                           ylabel='Amplitude',
-                                           xlabel='Frequency (Hz)',
-                                           title="Target signal in frequency domain",
-            )
-            st.pyplot(freqplot, clear_figure=True)
-    
+
+        source = pd.DataFrame({
+            'Frequency (Hz)': freqdomain.frequencies,
+            'Amplitude': np.abs(freqdomain.value),
+            'color':['#1f77b4', '#ff7f0e'][1]
+        })
+
+        chart = alt.Chart(source).mark_line().encode(
+            alt.X('Frequency (Hz)',
+                  scale=alt.Scale(
+                      domain=(0, 400),
+                      clamp=True)),
+            alt.Y('Amplitude:Q',
+                  scale=alt.Scale(
+                      domain=(-0, 5),
+                      clamp=True)),
+            color=alt.Color('color', scale=None)
+        ).properties(title='Target Signal in Frequency Domain')
+
+        st.altair_chart(chart, use_container_width=True)
+            
         st.markdown("""
         Converting to the **frequency domain** shows us the individual components that contributed to the total.
         In the **frequency domain**, the frequency (or pitch) of each component signal is shown on the x-axis.
@@ -135,18 +134,11 @@ to generate the signal.
     
     guess  = guess1 + guess2 + guess3
 
-    with lock:
-        figsum = guess.crop(cropstart, cropend).plot(label='guess',
-                                                     xlim=(cropstart,cropend),
-                                                     ylabel='Pressure',
-                                                     xlabel='Time (seconds)',
-                                                     title = 'Total signal in time domain',
-                                                     )        
-        ax = figsum.gca()
-        ax.plot(totalsignal.crop(cropstart, cropend), color='orange', linestyle='--', label='target')
-        ax.legend()
-        st.pyplot(figsum, clear_figure=True)
-
+    chart1 = plot_signal(guess, color_num=0, display=False)
+    chart2 = plot_signal(totalsignal, color_num=1, display=False)
+    chart = (chart2 + chart1).properties(title='Target Signal (orange) & Guess (blue)')
+    st.altair_chart(chart, use_container_width=True)
+        
     mismatch = (totalsignal.crop(cropstart, cropend) - guess.crop(cropstart, cropend)).value.max()
     # st.write(mismatch)
 
