@@ -49,18 +49,7 @@ to generate the signal.
     sig3 = makesine(300, 2, False)
     
     totalsignal = sig1+sig2+sig3
-
-    with lock:
-        plot_signal(totalsignal, color_num=1)
-        #fig_total = totalsignal.crop(cropstart, cropend).plot(
-        #    color='orange',
-        #    ylim=(-10, 10),
-        #    title='Taget Signal in Time Domain',
-        #    ylabel='Pressure',
-        #    xlabel='Time (seconds)',
-        #    xlim=(cropstart, cropend)
-        #)
-        #st.pyplot(fig_total)
+    plot_signal(totalsignal, color_num=1)
 
     st.audio(make_audio_file(totalsignal), format='audio/wav')
 
