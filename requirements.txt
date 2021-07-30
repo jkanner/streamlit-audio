@@ -1,6 +1,6 @@
 streamlit>=0.70.0
-gwpy=2.0.2
-astropy=4.0
+gwpy==2.0.2
+astropy==4.0
 matplotlib
 numpy
 
