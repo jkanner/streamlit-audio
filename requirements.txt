@@ -1,4 +1,4 @@
-streamlit==0.70.0
+streamlit
 gwpy==2.0.2
 astropy==4.0
 matplotlib
