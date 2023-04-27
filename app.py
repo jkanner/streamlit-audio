@@ -348,7 +348,7 @@ if page == 6:
     st.subheader('Whitened and Bandbassed Data')
 
     lowfreqreal, highfreqreal = st.slider("Band-pass filter cutoff (Hz)",
-                                          1, 2000, value=(1,2000) )
+                                          1, 1200, value=(1,1200) )
 
     makewhite = st.checkbox("Apply whitening", value=False)
 
@@ -404,5 +404,5 @@ if page == 6:
 st.markdown("""## About this app
 
 This app displays data from LIGO, Virgo, and GEO downloaded from the Gravitational Wave Open Science Center at 
-[https://gw-openscience.org](https://gw-osc.org).
+[https://gwosc.org](https://gwosc.org).
 """)

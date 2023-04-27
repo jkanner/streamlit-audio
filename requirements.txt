@@ -1,6 +1,7 @@
-streamlit
-gwpy==2.0.2
-astropy==4.0
-matplotlib
+streamlit==1.21.0
+gwpy==3.0.4
+gwosc==0.7.1
+astropy==5.2.2
+matplotlib==3.5.3
 numpy
 

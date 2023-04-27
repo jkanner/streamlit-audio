@@ -26,14 +26,14 @@ def make_audio_file(bp_data, t0=None):
     
     return virtualfile
 
-@st.cache   #-- Magic command to cache data
+@st.cache_data(max_entries=5)   #-- Magic command to cache data
 def load_gw(t0, detector):
     strain = TimeSeries.fetch_open_data(detector, t0-14, t0+14, cache=False)
     return strain
 
 
 # -- Method to make and cache random noise
-@st.cache
+@st.cache_data(max_entries=5)
 def makewhitenoise(fs, dt):
     noise = TimeSeries(random.normal(scale=.1, size=fs*dt), sample_rate=fs)
     return noise
