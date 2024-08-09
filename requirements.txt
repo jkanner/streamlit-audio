@@ -1,4 +1,4 @@
-streamlit==1.21.0
+streamlit==1.37.0
 gwpy==3.0.4
 gwosc==0.7.1
 astropy==5.2.2
