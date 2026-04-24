@@ -13,10 +13,6 @@ from scipy import signal
 
 from helper import makesine, make_audio_file, plot_signal
 
-# -- Need to lock plots to be more thread-safe
-from matplotlib.backends.backend_agg import RendererAgg
-lock = RendererAgg.lock
-
 cropstart = 1.0
 cropend   = 1.05
 
@@ -113,22 +109,19 @@ to generate the signal.
     freq1 = st.slider("Frequency (Hz)", 100, 400, 100, step=10)
     amp1 = st.number_input("Amplitude", 0, 5, 0, key='amp1slider')
 
-    with lock:
-        guess1 = makesine(freq1, amp1)
+    guess1 = makesine(freq1, amp1)
     
     st.markdown("#### Component 2")
     freq2 = st.slider("Frequency (Hz)", 100, 400, 150, step=10)
     amp2 = st.number_input("Amplitude", 0, 5, 0, key='amp2slider')
 
-    with lock:
-        guess2 = makesine(freq2, amp2)
+    guess2 = makesine(freq2, amp2)
     
     st.markdown("#### Component 3")
     freq3 = st.slider("Frequency (Hz)", 100, 400, 200, step=10)
     amp3 = st.number_input("Amplitude", 0, 5, 0, key='amp3slider')
 
-    with lock:
-        guess3 = makesine(freq3, amp3)
+    guess3 = makesine(freq3, amp3)
 
     st.markdown("### Adding the 3 components together:")
     
@@ -164,7 +157,6 @@ to generate the signal.
     When ready, go to the next section using the controls at the 
     top.
     """)
-    
     
     # -- Close all open figures
     plt.close('all')
