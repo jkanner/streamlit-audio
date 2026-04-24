@@ -16,10 +16,6 @@ from scipy import signal
 from scipy.io import wavfile
 from freqdomain2 import showfreqdomain
 
-# -- Need to lock plots to be more thread-safe
-from matplotlib.backends.backend_agg import RendererAgg
-lock = RendererAgg.lock
-
 # -- Helper functions in this git repo
 from helper import *
 
@@ -130,9 +126,8 @@ if page==2:
     or fractional change in length - of the observatory's arms.
     """)
 
-    with lock:
-        tplot = noise.plot(ylabel='Pressure')
-        st.pyplot(tplot)
+    tplot = noise.plot(ylabel='Pressure')
+    st.pyplot(tplot)
     
     st.markdown("### Frequency domain")
 
@@ -146,9 +141,8 @@ if page==2:
     frequency, this plot is mostly flat as you move from left to right.
     """)
 
-    with lock:
-        figwn = noise.asd(fftlength=1).plot(ylim=[1e-10, 1], ylabel='Amplitude Spectral Density')
-        st.pyplot(figwn)
+    figwn = noise.asd(fftlength=1).plot(ylim=[1e-10, 1], ylabel='Amplitude Spectral Density')
+    st.pyplot(figwn)
 
     st.markdown("### Audio player")
     st.markdown("""
@@ -195,15 +189,13 @@ if page == 3:
 
     st.markdown("In the time-domain, you can see the red noise looks random.")
 
-    with lock:
-        figrnt = maze.plot(ylabel='Pressure')
-        st.pyplot(figrnt)
+    figrnt = maze.plot(ylabel='Pressure')
+    st.pyplot(figrnt)
 
     st.markdown("In the frequency-domain, the red noise has lots of power at low frequencies.")
 
-    with lock:
-        figrn = maze.asd(fftlength=1).plot(ylabel='Amplitude Spectral Density', ylim=[1e-11, 1e-4], xlim=[30, fs/2])
-        st.pyplot(figrn)
+    figrn = maze.asd(fftlength=1).plot(ylabel='Amplitude Spectral Density', ylim=[1e-11, 1e-4], xlim=[30, fs/2])
+    st.pyplot(figrn)
         
     st.audio(make_audio_file(maze), format='audio/wav')
     st.markdown("""
@@ -247,14 +239,13 @@ if page == 4:
     highpass = maze.highpass(lowfreq)
     #st.pyplot(highpass.plot())
 
-    with lock:
-        fighp = highpass.asd(fftlength=1).plot(ylabel='Amplitude Spectral Density',
+    fighp = highpass.asd(fftlength=1).plot(ylabel='Amplitude Spectral Density',
                                            ylim=[1e-12, 1e-5],
                                            xlim=[30, fs/2]
                                            )
-        ax = fighp.gca()
-        ax.axvspan(1, lowfreq, color='red', alpha=0.3, label='Removed by filter')
-        st.pyplot(fighp)
+    ax = fighp.gca()
+    ax.axvspan(1, lowfreq, color='red', alpha=0.3, label='Removed by filter')
+    st.pyplot(fighp)
 
     st.audio(make_audio_file(highpass), format='audio/wav')
 
@@ -307,16 +298,14 @@ if page == 5:
     
     st.pyplot(whitemaze.plot())
 
-    with lock:
-        figwh = whitemaze.asd(fftlength=1).plot(ylim=[1e-12, 1], xlim=[30,fs/2], ylabel='Amplitude Spectral Density')
-        st.pyplot(figwh)
+    figwh = whitemaze.asd(fftlength=1).plot(ylim=[1e-12, 1], xlim=[30,fs/2], ylabel='Amplitude Spectral Density')
+    st.pyplot(figwh)
     
     st.audio(make_audio_file(whitemaze), format='audio/wav')
 
     st.markdown("""Try using the checkbox to whiten the data.  Is it 
     easier to hear the secret sound with or without whitening?
     """)
-
 
 if page == 6:
 
@@ -363,18 +352,16 @@ if page == 6:
     With the right filtering, you might be able to see the signal in the time domain plot.
     """)
 
-    with lock:
-        fig3 = bp_data.plot(xlim=[t0-0.1, t0+0.1])
-        st.pyplot(fig3)
+    fig3 = bp_data.plot(xlim=[t0-0.1, t0+0.1])
+    st.pyplot(fig3)
 
     # -- PSD of whitened data
     # -- Plot psd
-    with lock:
-        psdfig = bp_data.asd(fftlength=4).plot(xlim=[10, 1800], ylabel='Amplitude Spectral Density')    
-        ax = psdfig.gca()
-        ax.axvspan(1, lowfreqreal, color='red', alpha=0.3, label='Removed by filter')
-        ax.axvspan(highfreqreal, 1800, color='red', alpha=0.3, label='Removed by filter')
-        st.pyplot(psdfig)
+    psdfig = bp_data.asd(fftlength=4).plot(xlim=[10, 1800], ylabel='Amplitude Spectral Density')    
+    ax = psdfig.gca()
+    ax.axvspan(1, lowfreqreal, color='red', alpha=0.3, label='Removed by filter')
+    ax.axvspan(highfreqreal, 1800, color='red', alpha=0.3, label='Removed by filter')
+    st.pyplot(psdfig)
 
     # -- Audio
     st.audio(make_audio_file(bp_data.crop(t0-1, t0+1)), format='audio/wav')
@@ -398,8 +385,6 @@ if page == 6:
         """)
         
         st.image('https://journals.aps.org/prl/article/10.1103/PhysRevLett.116.061102/figures/1/large')
-
-
 
 st.markdown("""## About this app
 
