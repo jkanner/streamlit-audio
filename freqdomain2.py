@@ -87,7 +87,7 @@ to generate the signal.
             color=alt.Color('color', scale=None)
         ).properties(title='Target Signal in Frequency Domain')
 
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, width='stretch')
             
         st.markdown("""
         Converting to the **frequency domain** shows us the individual components that contributed to the total.
@@ -130,7 +130,7 @@ to generate the signal.
     chart1 = plot_signal(guess, color_num=0, display=False)
     chart2 = plot_signal(totalsignal, color_num=1, display=False)
     chart = (chart2 + chart1).properties(title='Target Signal (orange) & Guess (blue)')
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width='stretch')
         
     mismatch = (totalsignal.crop(cropstart, cropend) - guess.crop(cropstart, cropend)).value.max()
     # st.write(mismatch)
