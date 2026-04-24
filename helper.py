@@ -68,6 +68,6 @@ def plot_signal(signal, cropstart=1.0, cropend=1.05, color_num=0, display=True):
         )
 
     if display:
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, width='stretch')
 
     return(chart)
